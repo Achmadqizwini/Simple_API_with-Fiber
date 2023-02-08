@@ -5,15 +5,16 @@ import (
 	"be13/ca/factory"
 	"fmt"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
 	db := config.ConnectToDB()
+	defer db.Close()
 
-	e := echo.New()
+	e := fiber.New()
 
 	factory.InitFactory(e, db)
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", 8080)))
+	e.Listen(fmt.Sprintf(":%d", 8080))
 
 }

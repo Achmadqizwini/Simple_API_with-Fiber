@@ -1,0 +1,22 @@
+GET http://localhost:8080/mahasiswa/1
+
+###
+PUT http://localhost:8080/mahasiswa/1
+Content-Type: application/json
+
+{
+    "nama": "Mahmud",
+    "alamat": "Disana"
+}
+
+###
+DELETE http://localhost:8080/mahasiswa/19
+
+###
+POST http://localhost:8080/mahasiswa
+Content-Type: application/json
+
+{
+    "nama": "Rahmad",
+    "alamat": "Bancar"
+}

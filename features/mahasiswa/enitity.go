@@ -7,10 +7,10 @@ type Core struct {
 }
 
 type NilaiMhs struct {
-	ID          uint
-	Nama        string
-	NamaMatkul  string
-	NilaiRerata uint
+	ID           uint
+	Nama         string
+	Nama_Matkul  string
+	Nilai_Rerata uint
 }
 
 type ServiceInterface interface {

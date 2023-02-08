@@ -18,13 +18,8 @@ func NewRaw(db *sql.DB) mahasiswa.RepositoryInterface {
 
 // Create implements user.RepositoryInterface
 func (repo *mahasiswaRepository) Create(input mahasiswa.Core) (err error) {
-	var query = "Insert into mahasiswa (Nama, Alamat) Values (?, ?)"
-	statement, errPrepare := repo.db.Prepare(query)
-	if errPrepare != nil {
-		return errPrepare
-	}
 
-	_, errExec := statement.Exec(input.Nama, input.Alamat)
+	_, errExec := repo.db.Exec(("Insert into mahasiswa (Nama, Alamat) Values (?, ?)"), input.Nama, input.Alamat)
 	if errExec != nil {
 		return errExec
 	}
@@ -33,13 +28,8 @@ func (repo *mahasiswaRepository) Create(input mahasiswa.Core) (err error) {
 
 // DeleteUser implements mahasiswa.RepositoryInterface
 func (repo *mahasiswaRepository) Delete(id int) (err error) {
-	query := ("Delete from mahasiswa where id in (?)")
-	statement, errPrepare := repo.db.Prepare(query)
-	if errPrepare != nil {
-		return err
-	}
 
-	_, errExec := statement.Exec(id)
+	_, errExec := repo.db.Exec(("Delete from mahasiswa where id in (?)"), id)
 	if errExec != nil {
 		return errExec
 	}
@@ -48,12 +38,8 @@ func (repo *mahasiswaRepository) Delete(id int) (err error) {
 
 // UpdateUser implements mahasiswa.RepositoryInterface
 func (repo *mahasiswaRepository) Update(input mahasiswa.Core, id int) (err error) {
-	var query = ("Update users set nama = ?, alamat = ? where id = ?")
-	statement, errPrepare := repo.db.Prepare(query)
-	if errPrepare != nil {
-		return errPrepare
-	}
-	_, errExec := statement.Exec(input.Nama, input.Alamat, id)
+
+	_, errExec := repo.db.Exec(("Update mahasiswa set nama = ?, alamat = ? where id = ?"), input.Nama, input.Alamat, id)
 	if errExec != nil {
 		return errExec
 	}
@@ -62,6 +48,7 @@ func (repo *mahasiswaRepository) Update(input mahasiswa.Core, id int) (err error
 
 // Read implements mahasiswa.RepositoryInterface
 func (repo *mahasiswaRepository) Read(id int) (data []mahasiswa.NilaiMhs, err error) {
+
 	result, errSelect := repo.db.Query("select u.nama, v.nama_matkul, avg(nilai) from nilai inner join mahasiswa u on nilai.mahasiswa_id = u.id inner join matkul v on nilai.matkul_id = v.id where nilai.mahasiswa_id = (?)", id)
 	if errSelect != nil {
 		log.Fatal("error select", errSelect.Error())
@@ -70,10 +57,12 @@ func (repo *mahasiswaRepository) Read(id int) (data []mahasiswa.NilaiMhs, err er
 	var mhs []mahasiswa.NilaiMhs
 	for result.Next() {
 		var mhsRow mahasiswa.NilaiMhs
-		errScan := result.Scan(&mhsRow.Nama, &mhsRow.NamaMatkul, &mhsRow.NilaiRerata)
+
+		errScan := result.Scan(&mhsRow.Nama, &mhsRow.Nama_Matkul, &mhsRow.Nilai_Rerata)
 		if errScan != nil {
 			log.Fatal("error scan", errScan.Error())
 		}
+
 		mhs = append(mhs, mhsRow)
 	}
 	return mhs, nil
